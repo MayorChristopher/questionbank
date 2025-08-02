@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useAuth } from "@/contexts/SupabaseAuthContext";
+import { supabase } from "@/lib/customSupabaseClient";
 import { useToast } from "@/components/ui/use-toast";
 
 const RegisterPage = () => {
@@ -76,13 +77,17 @@ const RegisterPage = () => {
     } = await supabase.auth.getSession();
 
     if (session?.user) {
-      const { error: profileError } = await supabase.from("profiles").insert([
-        {
-          id: session.user.id,
-          full_name: name,
-          role: "user",
-        },
-      ]);
+      // Use upsert to avoid duplicate row error if profile already exists
+      const { error: profileError } = await supabase.from("profiles").upsert(
+        [
+          {
+            id: session.user.id,
+            full_name: name,
+            role: "user",
+          },
+        ],
+        { onConflict: "id" }
+      );
 
       if (profileError) {
         toast({
@@ -97,7 +102,7 @@ const RegisterPage = () => {
 
     toast({
       title: "Account created successfully!",
-      description: "Please check your email for a confirmation link.",
+      description: "You can now log in with your credentials.",
     });
 
     navigate("/login");
@@ -265,7 +270,7 @@ const RegisterPage = () => {
                       to="/login"
                       className="text-mouau-green hover:text-mouau-darkGreen font-medium"
                     >
-                      Sign in here
+                      Sign in instead
                     </Link>
                   </p>
                 </div>
