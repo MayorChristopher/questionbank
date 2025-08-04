@@ -169,20 +169,11 @@ const AdminUploadPage = () => {
   };
 
   const handleDownload = async (filePath) => {
-    const { data, error } = await supabase.storage
+    const { data } = supabase.storage
       .from("past-questions")
-      .createSignedUrl(filePath, 60 * 5);
+      .getPublicUrl(filePath);
 
-    if (error) {
-      toast({
-        title: "Download failed",
-        description: error.message,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    window.open(data.signedUrl, "_blank");
+    window.open(data.publicUrl, "_blank");
   };
 
   const fetchUploadedFiles = async () => {
