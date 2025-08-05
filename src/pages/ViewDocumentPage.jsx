@@ -94,7 +94,6 @@ const ViewDocumentPage = () => {
     await supabase.from("downloads_log").insert({
       user_id: user.id,
       file_path: document.file_path,
-      question_id: document.id,
     });
   };
 
