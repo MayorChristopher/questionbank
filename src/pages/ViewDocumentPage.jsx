@@ -85,16 +85,35 @@ const ViewDocumentPage = () => {
       return;
     }
 
-    const { data } = supabase.storage
-      .from("past-questions")
-      .getPublicUrl(document.file_path);
-
-    window.open(data.publicUrl, "_blank");
-
-    await supabase.from("downloads_log").insert({
-      user_id: user.id,
-      file_path: document.file_path,
-    });
+    try {
+      // Use proxy endpoint for download to avoid CORS issues
+      const proxyUrl = `/api/proxy-storage?filePath=${encodeURIComponent(
+        document.file_path
+      )}`;
+      const response = await fetch(proxyUrl);
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = document.file_path.split("/").pop() || "downloaded-file";
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+      // Log download
+      await supabase.from("downloads_log").insert({
+        user_id: user.id,
+        file_path: document.file_path,
+      });
+    } catch (error) {
+      toast({
+        title: "Download failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   const handleShare = () => {

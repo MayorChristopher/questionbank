@@ -169,11 +169,27 @@ const AdminUploadPage = () => {
   };
 
   const handleDownload = async (filePath) => {
-    const { data } = supabase.storage
-      .from("past-questions")
-      .getPublicUrl(filePath);
-
-    window.open(data.publicUrl, "_blank");
+    try {
+      // Use proxy endpoint for download to avoid CORS issues
+      const proxyUrl = `/api/proxy-storage?filePath=${encodeURIComponent(
+        filePath
+      )}`;
+      const response = await fetch(proxyUrl);
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filePath.split("/").pop() || "downloaded-file";
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    } catch (error) {
+      // Optionally show a toast or alert
+      alert("Download failed: " + error.message);
+    }
   };
 
   const fetchUploadedFiles = async () => {
