@@ -78,7 +78,7 @@ const AdminUploadPage = () => {
   const [loading, setLoading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [fetching, setFetching] = useState(false);
-  const MAX_FILE_SIZE_MB = 50;
+  const MAX_FILE_SIZE_MB = 4;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

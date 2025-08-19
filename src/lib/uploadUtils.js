@@ -2,6 +2,11 @@ import { supabase } from './customSupabaseClient';
 
 export const uploadFileToStorage = async (file, filePath) => {
   try {
+    // Check file size (Vercel limit is ~4.5MB)
+    if (file.size > 4.5 * 1024 * 1024) {
+      throw new Error('File too large. Maximum size is 4.5MB for deployment.');
+    }
+
     const response = await fetch(`/api/proxy-upload?filePath=${encodeURIComponent(filePath)}`, {
       method: 'POST',
       body: file,
@@ -10,7 +15,16 @@ export const uploadFileToStorage = async (file, filePath) => {
       },
     });
 
-    const result = await response.json();
+    if (response.status === 413) {
+      throw new Error('File too large for upload. Please use a smaller file.');
+    }
+
+    let result;
+    try {
+      result = await response.json();
+    } catch {
+      throw new Error('Upload failed - server error');
+    }
     
     if (!response.ok) {
       throw new Error(result.error || 'Upload failed');
