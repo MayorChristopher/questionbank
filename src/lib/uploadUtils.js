@@ -10,9 +10,10 @@ export const uploadFileToStorage = async (file, filePath) => {
       },
     });
 
+    const result = await response.json();
+    
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Upload failed');
+      throw new Error(result.error || 'Upload failed');
     }
 
     return { data: { path: filePath }, error: null };

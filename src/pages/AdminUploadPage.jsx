@@ -103,16 +103,12 @@ const AdminUploadPage = () => {
   };
 
   const handleDelete = async (file) => {
-    const { error: deleteError } = await supabase.storage
-      .from("past-questions")
-      .remove([file.file_path]);
-
-    if (!deleteError) {
+    try {
       await supabase.from("past_questions").delete().eq("id", file.id);
       toast({ title: "Deleted successfully" });
       fetchUploadedFiles();
-    } else {
-      toast({ title: "Error deleting", description: deleteError.message });
+    } catch (error) {
+      toast({ title: "Error deleting", description: error.message, variant: "destructive" });
     }
   };
   const handleSubmit = async (e) => {
