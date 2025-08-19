@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
-import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search,
@@ -25,7 +24,6 @@ import { supabase } from "@/lib/customSupabaseClient";
 
 const DashboardPage = () => {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   const role = user?.profile?.role;
@@ -33,12 +31,12 @@ const DashboardPage = () => {
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate("/login");
+      window.location.href = "/login";
     }
-  }, [user, loading, navigate]);
+  }, [user, loading]);
 
   const handleViewDownloads = () => {
-    navigate("/dashboard/downloads");
+    window.location.href = "/dashboard/downloads";
   };
 
   const [quickStats, setQuickStats] = useState([
@@ -51,12 +49,10 @@ const DashboardPage = () => {
 
   useEffect(() => {
     const fetchStatsAndRecent = async () => {
-      // Available Questions
       const { count: questionsCount } = await supabase
         .from("past_questions")
         .select("id", { count: "exact", head: true });
 
-      // User Downloads
       let downloadsCount = "-";
       if (user) {
         const { count: userDownloads } = await supabase
@@ -66,7 +62,6 @@ const DashboardPage = () => {
         downloadsCount = userDownloads ?? "-";
       }
 
-      // Recent Views (could be downloads for now)
       let recentViews = "-";
       if (user) {
         const { count: recent } = await supabase
@@ -80,7 +75,6 @@ const DashboardPage = () => {
         recentViews = recent ?? "-";
       }
 
-      // Active Students (users with an account)
       const { count: activeStudentsCount } = await supabase
         .from("profiles")
         .select("id", { count: "exact", head: true });
@@ -100,7 +94,6 @@ const DashboardPage = () => {
         },
       ]);
 
-      // Recent Questions
       const { data, error } = await supabase
         .from("past_questions")
         .select("*")
@@ -153,7 +146,6 @@ const DashboardPage = () => {
             </p>
           </motion.div>
 
-          {/* Quick Actions */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -172,7 +164,7 @@ const DashboardPage = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Link to="/search">
+                  <a href="/search">
                     <Button
                       className="w-full h-16 text-left justify-start"
                       variant="outline"
@@ -189,9 +181,9 @@ const DashboardPage = () => {
                         </div>
                       </div>
                     </Button>
-                  </Link>
+                  </a>
 
-                  <Link to="/departments">
+                  <a href="/departments">
                     <Button
                       className="w-full h-16 text-left justify-start"
                       variant="outline"
@@ -208,7 +200,7 @@ const DashboardPage = () => {
                         </div>
                       </div>
                     </Button>
-                  </Link>
+                  </a>
 
                   <Button
                     onClick={handleViewDownloads}
@@ -251,19 +243,17 @@ const DashboardPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="flex gap-4">
-                    <Link to="/admin/upload">
+                    <a href="/admin/upload">
                       <Button className="bg-mouau-green text-white hover:bg-[#256029]">
                         Upload Questions
                       </Button>
-                    </Link>
-                    {/* You can add more admin tools here later */}
+                    </a>
                   </div>
                 </CardContent>
               </Card>
             </motion.div>
           )}
 
-          {/* Stats */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -294,7 +284,6 @@ const DashboardPage = () => {
             ))}
           </motion.div>
 
-          {/* Most Downloaded Questions */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -362,7 +351,7 @@ const DashboardPage = () => {
                   ))}
                 </div>
                 <div className="mt-6 text-center">
-                  <Link to="/search">
+                  <a href="/search">
                     <Button
                       variant="outline"
                       className="border-mouau-yellow text-mouau-yellow hover:bg-mouau-yellow/10"
@@ -370,7 +359,7 @@ const DashboardPage = () => {
                       View All Questions
                       <Search className="ml-2 w-4 h-4" />
                     </Button>
-                  </Link>
+                  </a>
                 </div>
               </CardContent>
             </Card>

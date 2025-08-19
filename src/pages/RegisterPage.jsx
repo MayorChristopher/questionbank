@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link, useNavigate } from "react-router-dom";
+// import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, User, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,7 @@ const RegisterPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { signUp } = useAuth();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleChange = (e) => {
@@ -105,7 +105,7 @@ const RegisterPage = () => {
       description: "You can now log in with your credentials.",
     });
 
-    navigate("/login");
+    window.location.href = "/login";
     setLoading(false);
   };
 
@@ -266,12 +266,12 @@ const RegisterPage = () => {
                 <div className="mt-6 text-center">
                   <p className="text-sm text-gray-600">
                     Already have an account?{" "}
-                    <Link
-                      to="/login"
+                    <a
+                      href="/login"
                       className="text-mouau-green hover:text-mouau-darkGreen font-medium"
                     >
                       Sign in instead
-                    </Link>
+                    </a>
                   </p>
                 </div>
               </CardContent>

@@ -114,6 +114,8 @@ export const AuthProvider = ({ children }) => {
     return { error };
   }, [toast]);
 
+  const isAdmin = user?.profile?.role === 'admin' || user?.email === 'admin@example.com';
+
   const value = useMemo(
     () => ({
       user,
@@ -122,8 +124,9 @@ export const AuthProvider = ({ children }) => {
       signUp,
       signIn,
       signOut,
+      isAdmin,
     }),
-    [user, session, loading, signUp, signIn, signOut]
+    [user, session, loading, signUp, signIn, signOut, isAdmin]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

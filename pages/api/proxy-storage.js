@@ -1,4 +1,12 @@
 export default async function handler(req, res) {
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Authorization');
+    return res.status(200).end();
+  }
+
   // Only allow GET requests
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -10,8 +18,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'File path is required' });
   }
 
-  // Build Supabase Storage URL
-  const fileUrl = `https://debescctuqegxpmflerg.storage.supabase.co/v1/object/past-questions/${filePath}`;
+  // Build Supabase Storage URL with proper encoding
+  const encodedFilePath = encodeURIComponent(filePath);
+  const fileUrl = `https://debescctuqegxpmflerg.supabase.co/storage/v1/object/past-questions/${encodedFilePath}`;
 
   try {
     // Fetch file from Supabase Storage
@@ -22,20 +31,24 @@ export default async function handler(req, res) {
     });
 
     if (!response.ok) {
+      console.error(`Supabase storage error: ${response.status} - ${response.statusText}`);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     // Set CORS headers
-    res.setHeader('Access-Control-Allow-Origin', process.env.ALLOWED_ORIGIN || 'https://mouauqb.vercel.app');
-    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Authorization');
     res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=60');
 
     // Copy content headers
-    const contentType = response.headers.get('content-type');
-    const contentDisposition = response.headers.get('content-disposition');
-    if (contentType) res.setHeader('Content-Type', contentType);
-    if (contentDisposition) res.setHeader('Content-Disposition', contentDisposition);
+    const contentType = response.headers.get('content-type') || 'application/pdf';
+    const contentLength = response.headers.get('content-length');
+    
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('Content-Security-Policy', "frame-ancestors 'self'");
+    if (contentLength) res.setHeader('Content-Length', contentLength);
 
     // Stream file
     const buffer = await response.arrayBuffer();

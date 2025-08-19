@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
-import { Link, useNavigate } from "react-router-dom";
+// import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ const LoginPage = () => {
   const [formLoading, setFormLoading] = useState(false);
   const { signIn, user, loading: authLoading } = useAuth();
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = async (e) => {
@@ -50,9 +50,9 @@ const LoginPage = () => {
   };
   useEffect(() => {
     if (!authLoading && user?.profile?.role) {
-      navigate("/dashboard");
+      window.location.href = "/dashboard";
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading]);
 
   const handleForgotPassword = () => {
     toast({
@@ -174,12 +174,12 @@ const LoginPage = () => {
                 <div className="mt-6 text-center">
                   <p className="text-sm text-gray-600">
                     Don't have an account?{" "}
-                    <Link
-                      to="/register"
+                    <a
+                      href="/register"
                       className="text-mouau-green hover:text-[#256029] font-medium"
                     >
                       Create one here
-                    </Link>
+                    </a>
                   </p>
                 </div>
               </CardContent>

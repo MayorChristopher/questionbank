@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search,
@@ -338,7 +338,7 @@ const SearchPage = () => {
                       </CardHeader>
                       <CardContent className="flex-grow flex flex-col justify-end">
                         <div className="flex space-x-2 mt-4">
-                          <Link to={`/document/${q.id}`} className="flex-1">
+                          <a href={`/document/${q.id}`} className="flex-1">
                             <Button
                               variant="outline"
                               size="sm"
@@ -346,7 +346,7 @@ const SearchPage = () => {
                             >
                               <Eye className="w-4 h-4 mr-2" /> View
                             </Button>
-                          </Link>
+                          </a>
                           <Button
                             size="sm"
                             className="flex-1 bg-mouau-green hover:bg-mouau-green/90 text-white"

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Building, Users, BookOpen, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import { supabase } from "@/lib/customSupabaseClient";
 
 const DepartmentsPage = () => {
@@ -20,21 +18,43 @@ const DepartmentsPage = () => {
 
   useEffect(() => {
     const fetchDepartments = async () => {
-      // Get all unique departments from past_questions
       const { data, error } = await supabase
         .from("past_questions")
-        .select("department")
-        .neq("department", "")
-        .order("department", { ascending: true });
+        .select("department");
+
       if (!error && data) {
-        // Remove duplicates
         const unique = Array.from(new Set(data.map((d) => d.department)));
-        setDepartments(unique);
+        setDepartments(unique.sort());
       }
       setLoading(false);
     };
+
     fetchDepartments();
   }, []);
+
+  const departmentColors = [
+    "from-blue-500 to-blue-600",
+    "from-green-500 to-green-600", 
+    "from-purple-500 to-purple-600",
+    "from-red-500 to-red-600",
+    "from-yellow-500 to-yellow-600",
+    "from-indigo-500 to-indigo-600",
+    "from-pink-500 to-pink-600",
+    "from-teal-500 to-teal-600",
+  ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-mouau-lightGreen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-mouau-yellow rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse">
+            <Building className="w-8 h-8 text-mouau-green" />
+          </div>
+          <p className="text-gray-600">Loading departments...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -46,130 +66,96 @@ const DepartmentsPage = () => {
         />
       </Helmet>
 
-      <div className="min-h-screen bg-mouau-lightGreen py-8">
+      <div className="min-h-screen bg-mouau-lightGreen py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
-            <h1 className="text-3xl md:text-4xl font-bold text-mouau-green mb-4">
+            <h1 className="text-4xl font-bold text-mouau-green mb-4">
               Browse by Department
             </h1>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Explore past questions organized by academic departments. Click on
-              any department to filter questions specific to that field of
-              study.
+              Explore past questions organized by academic departments. Find the
+              resources you need for your specific field of study.
             </p>
           </motion.div>
 
-          {/* Stats Overview */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
-          >
-            <Card className="academic-card text-center border-mouau-green">
-              <CardContent className="p-6">
-                <div className="w-16 h-16 bg-mouau-yellow rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Building className="w-8 h-8 text-mouau-green" />
-                </div>
-                <h3 className="text-2xl font-bold text-mouau-green mb-2">
-                  {departments.length}
-                </h3>
-                <p className="text-gray-700">Departments</p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Departments Grid */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-          >
-            {loading ? (
-              <div className="col-span-full text-center py-12 text-mouau-green text-xl">
-                Loading departments...
-              </div>
-            ) : departments.length === 0 ? (
-              <div className="col-span-full text-center py-12 text-mouau-green text-xl">
-                No departments found.
-              </div>
-            ) : (
-              departments.map((department, index) => (
-                <motion.div
-                  key={department}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Card className="academic-card h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-mouau-green cursor-pointer group">
-                    <CardHeader className="text-center">
-                      <CardTitle className="text-lg text-mouau-green group-hover:text-mouau-yellow transition-colors">
-                        {department}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <Link
-                        to={`/search?department=${encodeURIComponent(
-                          department
-                        )}`}
-                        className="block"
-                      >
-                        <Button className="w-full mt-4 bg-mouau-green hover:bg-mouau-green/90 text-white">
-                          Browse Questions
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </Button>
-                      </Link>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))
-            )}
-          </motion.div>
-
-          {/* Call to Action */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-center mt-16"
-          >
-            <Card className="academic-card max-w-2xl mx-auto border-mouau-green">
-              <CardContent className="p-8">
-                <h2 className="text-2xl font-bold text-mouau-green mb-4">
-                  Can't find your department?
-                </h2>
-                <p className="text-gray-700 mb-6">
-                  We're constantly adding new departments and courses. Contact
-                  us to request your specific department or course materials.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Link to="/contact">
-                    <Button
-                      size="lg"
-                      className="bg-mouau-green hover:bg-mouau-green/90 text-white"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {departments.map((department, index) => (
+              <motion.div
+                key={department}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <Card className="academic-card h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-white">
+                  <CardHeader>
+                    <div
+                      className={`w-16 h-16 bg-gradient-to-r ${
+                        departmentColors[index % departmentColors.length]
+                      } rounded-2xl flex items-center justify-center mx-auto mb-4`}
                     >
-                      Contact Us
-                    </Button>
-                  </Link>
-                  <Link to="/search">
-                    <Button
-                      size="lg"
-                      variant="outline"
-                      className="border-mouau-yellow text-mouau-yellow hover:bg-mouau-yellow/10"
-                    >
-                      Search All Questions
-                    </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+                      <Building className="w-8 h-8 text-white" />
+                    </div>
+                    <CardTitle className="text-xl text-center text-mouau-green">
+                      {department}
+                    </CardTitle>
+                    <CardDescription className="text-center">
+                      Access past questions and study materials
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <div className="flex items-center justify-center space-x-4 mb-6 text-sm text-gray-600">
+                      <div className="flex items-center space-x-1">
+                        <BookOpen className="w-4 h-4" />
+                        <span>Questions</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Users className="w-4 h-4" />
+                        <span>Students</span>
+                      </div>
+                    </div>
+                    <a href={`/search?department=${encodeURIComponent(department)}`}>
+                      <Button className="w-full bg-mouau-green hover:bg-mouau-darkGreen text-white">
+                        Browse Questions
+                        <ArrowRight className="ml-2 w-4 h-4" />
+                      </Button>
+                    </a>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          {departments.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-12"
+            >
+              <Building className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                No Departments Found
+              </h3>
+              <p className="text-gray-500 mb-6">
+                There are no departments with uploaded questions yet.
+              </p>
+              <div className="space-x-4">
+                <a href="/contact">
+                  <Button variant="outline" className="border-mouau-green text-mouau-green">
+                    Contact Support
+                  </Button>
+                </a>
+                <a href="/search">
+                  <Button className="bg-mouau-green text-white">
+                    Browse All Questions
+                  </Button>
+                </a>
+              </div>
+            </motion.div>
+          )}
         </div>
       </div>
     </>

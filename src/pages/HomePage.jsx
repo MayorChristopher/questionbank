@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, Filter, Download, Shield, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -63,7 +63,7 @@ const HomePage = () => {
                   our comprehensive database.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <Link to="/register">
+                  <a href="/register">
                     <Button
                       size="lg"
                       className="w-full sm:w-auto bg-mouau-green hover:bg-green-700 text-white"
@@ -71,8 +71,8 @@ const HomePage = () => {
                       Get Started
                       <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
-                  </Link>
-                  <Link to="/search">
+                  </a>
+                  <a href="/search">
                     <Button
                       variant="outline"
                       size="lg"
@@ -80,7 +80,7 @@ const HomePage = () => {
                     >
                       Browse Questions
                     </Button>
-                  </Link>
+                  </a>
                 </div>
               </motion.div>
 
@@ -160,7 +160,7 @@ const HomePage = () => {
                 performance with Question Bank
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/register">
+                <a href="/register">
                   <Button
                     size="lg"
                     className="w-full sm:w-auto bg-mouau-green hover:bg-green-700 text-white"
@@ -168,8 +168,8 @@ const HomePage = () => {
                     Create Account
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
-                </Link>
-                <Link to="/about">
+                </a>
+                <a href="/about">
                   <Button
                     variant="outline"
                     size="lg"
@@ -177,7 +177,7 @@ const HomePage = () => {
                   >
                     Learn More
                   </Button>
-                </Link>
+                </a>
               </div>
             </motion.div>
           </div>

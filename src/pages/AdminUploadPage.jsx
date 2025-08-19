@@ -14,6 +14,7 @@ import {
 
 // Supabase client
 import { supabase } from "@/lib/customSupabaseClient";
+import { uploadFileToStorage, downloadFile } from "@/lib/uploadUtils";
 
 // Toast notification hook
 import { useToast } from "@/components/ui/use-toast";
@@ -124,71 +125,58 @@ const AdminUploadPage = () => {
 
     const filePath = `${formData.department}/${Date.now()}-${file.name}`;
 
-    // Step 1: Upload file to Supabase Storage
-    const { error: uploadError } = await supabase.storage
-      .from("past-questions")
-      .upload(filePath, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
+    try {
+      // Step 1: Upload file using utility function
+      const { data, error: uploadError } = await uploadFileToStorage(file, filePath);
 
-    if (uploadError) {
-      setLoading(false);
-      return toast({
-        title: "File upload failed",
-        description: uploadError.message,
-        variant: "destructive",
-      });
-    }
+      if (uploadError) {
+        throw new Error(uploadError.message || 'Upload failed');
+      }
 
-    // Step 2: Insert file metadata into the database
-    const { error: insertError } = await supabase
-      .from("past_questions")
-      .insert([
-        {
-          ...formData,
-          file_path: filePath,
-        },
-      ]);
+      // Step 2: Insert file metadata into the database
+      const { error: insertError } = await supabase
+        .from("past_questions")
+        .insert([
+          {
+            ...formData,
+            file_path: filePath,
+          },
+        ]);
 
-    if (insertError) {
-      // Optional: Clean up uploaded file if DB insert fails
-      await supabase.storage.from("past-questions").remove([filePath]);
+      if (insertError) {
+        throw new Error(insertError.message);
+      }
 
-      toast({
-        title: "Database insert failed",
-        description: insertError.message,
-        variant: "destructive",
-      });
-    } else {
       toast({ title: "Upload successful!" });
-      fetchUploadedFiles(); // Refresh the table
+      setFormData({
+        course_code: "",
+        course_title: "",
+        department: "",
+        level: "",
+        semester: "",
+        session: "",
+      });
+      setFile(null);
+      fetchUploadedFiles();
+    } catch (error) {
+      toast({
+        title: "Upload failed",
+        description: error.message,
+        variant: "destructive",
+      });
     }
 
     setLoading(false);
   };
 
   const handleDownload = async (filePath) => {
-    try {
-      // Use proxy endpoint for download to avoid CORS issues
-      const proxyUrl = `/api/proxy-storage?filePath=${encodeURIComponent(
-        filePath
-      )}`;
-      const response = await fetch(proxyUrl);
-      if (!response.ok)
-        throw new Error(`HTTP error! status: ${response.status}`);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filePath.split("/").pop() || "downloaded-file";
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      a.remove();
-    } catch (error) {
-      // Optionally show a toast or alert
-      alert("Download failed: " + error.message);
+    const result = await downloadFile(filePath);
+    if (!result.success) {
+      toast({
+        title: "Download failed",
+        description: result.error,
+        variant: "destructive",
+      });
     }
   };
 

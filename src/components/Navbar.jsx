@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Menu,
@@ -26,13 +25,11 @@ import { useToast } from "@/components/ui/use-toast";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, signOut, isAdmin } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
   const { toast } = useToast();
 
   const handleLogout = async () => {
     await signOut();
-    navigate("/");
+    window.location.href = "/";
     toast({
       title: "Logged out successfully",
       description: "You have been logged out of your account.",
@@ -40,7 +37,7 @@ const Navbar = () => {
   };
 
   const handleNavigation = (path) => {
-    navigate(path);
+    window.location.href = path;
     setIsOpen(false);
   };
 
@@ -59,35 +56,31 @@ const Navbar = () => {
     <nav className="bg-white/95 backdrop-blur-md border-b border-mouau-green/20 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link to="/" className="flex items-center space-x-2">
+          <a href="/" className="flex items-center space-x-2">
             <div className="w-10 h-10 bg-mouau-yellow rounded-lg flex items-center justify-center">
               <BookOpen className="w-6 h-6 text-mouau-green" />
             </div>
             <span className="text-xl font-bold text-mouau-green hidden sm:inline">
               Question Bank
             </span>
-          </Link>
+          </a>
 
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              <Link
+              <a
                 key={item.name}
-                to={item.path}
-                className={`text-sm font-medium transition-colors hover:text-mouau-green ${
-                  location.pathname === item.path
-                    ? "text-mouau-green border-b-2 border-mouau-green pb-1"
-                    : "text-gray-700"
-                }`}
+                href={item.path}
+                className="text-sm font-medium transition-colors hover:text-mouau-green text-gray-700"
               >
                 {item.name}
-              </Link>
+              </a>
             ))}
           </div>
 
           <div className="hidden md:flex items-center space-x-2">
             {user ? (
               <>
-                <Link to="/dashboard">
+                <a href="/dashboard">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -95,9 +88,9 @@ const Navbar = () => {
                   >
                     Dashboard
                   </Button>
-                </Link>
+                </a>
                 {isAdmin && (
-                  <Link to="/admin/upload">
+                  <a href="/admin/upload">
                     <Button
                       variant="outline"
                       size="sm"
@@ -105,7 +98,7 @@ const Navbar = () => {
                     >
                       <Shield className="w-4 h-4 mr-2" /> Admin
                     </Button>
-                  </Link>
+                  </a>
                 )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -144,7 +137,7 @@ const Navbar = () => {
               </>
             ) : (
               <div className="flex items-center space-x-2">
-                <Link to="/login">
+                <a href="/login">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -152,20 +145,19 @@ const Navbar = () => {
                   >
                     Login
                   </Button>
-                </Link>
-                <Link to="/register">
+                </a>
+                <a href="/register">
                   <Button
                     size="sm"
                     className="bg-mouau-green hover:bg-green-700 text-white"
                   >
                     Register
                   </Button>
-                </Link>
+                </a>
               </div>
             )}
           </div>
 
-          {/* Mobile Menu */}
           <div className="md:hidden flex items-center">
             {user && (
               <DropdownMenu>
@@ -223,7 +215,6 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Nav Items */}
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
@@ -233,22 +224,18 @@ const Navbar = () => {
           >
             <div className="flex flex-col space-y-4 px-4">
               {navItems.map((item) => (
-                <Link
+                <a
                   key={item.name}
-                  to={item.path}
-                  className={`text-base font-medium transition-colors hover:text-mouau-green ${
-                    location.pathname === item.path
-                      ? "text-mouau-green"
-                      : "text-gray-700"
-                  }`}
+                  href={item.path}
+                  className="text-base font-medium transition-colors hover:text-mouau-green text-gray-700"
                   onClick={() => setIsOpen(false)}
                 >
                   {item.name}
-                </Link>
+                </a>
               ))}
               {!user && (
                 <div className="pt-4 border-t border-gray-200 flex flex-col space-y-2">
-                  <Link to="/login" onClick={() => setIsOpen(false)}>
+                  <a href="/login" onClick={() => setIsOpen(false)}>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -256,15 +243,15 @@ const Navbar = () => {
                     >
                       Login
                     </Button>
-                  </Link>
-                  <Link to="/register" onClick={() => setIsOpen(false)}>
+                  </a>
+                  <a href="/register" onClick={() => setIsOpen(false)}>
                     <Button
                       size="sm"
                       className="w-full bg-mouau-green text-white"
                     >
                       Register
                     </Button>
-                  </Link>
+                  </a>
                 </div>
               )}
             </div>

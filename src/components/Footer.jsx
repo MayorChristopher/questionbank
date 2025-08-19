@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { BookOpen, Mail } from "lucide-react";
 
 const Footer = () => {
@@ -7,7 +6,6 @@ const Footer = () => {
     <footer className="bg-mouau-green text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Logo and Description */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
               <div className="w-10 h-10 bg-mouau-yellow rounded-lg flex items-center justify-center">
@@ -25,56 +23,54 @@ const Footer = () => {
             <div className="flex space-x-4">
               <div className="flex items-center space-x-2 text-sm text-mouau-lightYellow">
                 <Mail className="w-4 h-4" />
-                <span>support@Question Bank.edu</span>
+                <span>support@questionbank.edu</span>
               </div>
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
             <span className="text-lg font-semibold mb-4 block text-mouau-yellow">
               Quick Links
             </span>
             <div className="space-y-2">
-              <Link
-                to="/"
+              <a
+                href="/"
                 className="block text-mouau-lightYellow hover:text-white transition-colors"
               >
                 Home
-              </Link>
-              <Link
-                to="/search"
+              </a>
+              <a
+                href="/search"
                 className="block text-mouau-lightYellow hover:text-white transition-colors"
               >
                 Search Questions
-              </Link>
-              <Link
-                to="/departments"
+              </a>
+              <a
+                href="/departments"
                 className="block text-mouau-lightYellow hover:text-white transition-colors"
               >
                 Departments
-              </Link>
-              <Link
-                to="/about"
+              </a>
+              <a
+                href="/about"
                 className="block text-mouau-lightYellow hover:text-white transition-colors"
               >
                 About
-              </Link>
+              </a>
             </div>
           </div>
 
-          {/* Support */}
           <div>
             <span className="text-lg font-semibold mb-4 block text-mouau-yellow">
               Support
             </span>
             <div className="space-y-2">
-              <Link
-                to="/contact"
+              <a
+                href="/contact"
                 className="block text-mouau-lightYellow hover:text-white transition-colors"
               >
                 Contact Us
-              </Link>
+              </a>
               <span className="block text-mouau-lightYellow cursor-pointer hover:text-white transition-colors">
                 Terms of Service
               </span>
